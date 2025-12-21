@@ -135,5 +135,81 @@ void printHelp(){
 
 // main loop
 int main() {
+    TextEditor editor;
+    string command;
+
+    cout << "Simple Text Editor v1.0\n";
+    printHelp();
+
+    while (true) {
+        if (command == "q") {
+            if (editor.isModified()) {
+                cout << "File has unsaved changes. Save before quitting? (y/n): ";
+                char response;
+                cin >> response;
+                if (response == 'y' || response == 'Y') {
+                    editor.saveFile();
+                }
+            }
+            cout << "Goodbye!" << endl;
+            break;
+        }
+        else if (command == "l") {
+            string fname;
+            cin >> fname;
+            editor.loadFile(fname);
+        }
+        else if (command == "s") {
+            editor.saveFile();
+        }
+        else if (command == "d") {
+            editor.display();
+        }
+        else if (command == "i") {
+            size_t lineNum;
+            cin >> lineNum;
+            cin.ignore(); // Ignore the newline after the number
+            
+            cout << "Enter text (empty line to finish):\n";
+            string text;
+            while (getline(cin, text) && !text.empty()) {
+                editor.insertLine(lineNum, text);
+                lineNum++;
+            }
+            cout << "Text inserted." << endl;
+        }
+        else if (command == "e") {
+            size_t lineNum;
+            cin >> lineNum;
+            cin.ignore();
+            
+            if (lineNum > 0 && lineNum <= editor.getLineCount()) {
+                cout << "Enter new text for line " << lineNum << ": ";
+                string text;
+                getline(cin, text);
+                editor.editLine(lineNum - 1, text);
+            } else {
+                cout << "Invalid line number!" << endl;
+            }
+        }
+        else if (command == "x") {
+            size_t lineNum;
+            cin >> lineNum;
+            if (lineNum > 0) {
+                editor.deleteLine(lineNum - 1);
+            }
+        }
+        else if (command == "h") {
+            printHelp();
+        }
+        else {
+            cout << "Unknown command. Type 'h' for help." << endl;
+        }
+
+
+    }
+
+
+
     return 0;
 }
