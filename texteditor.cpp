@@ -38,13 +38,102 @@ class TextEditor{
         }
 
         //Save current content to file
-        
+        bool saveFile(){
+            if (filename.empty()){
+                cout << "no filename specifed." << endl;
+                return false;
+            }
+
+            ofstream file (filename);
+            if(!file.is_open()){
+                cout << "Could not open file for writing: " << filename << endl;
+                return false;
+            }
+
+            // Write each line to the file
+            for (const auto& line : lines){
+                file << line << endl;
+            }
+
+            file.close();
+            modified = false;
+            cout << "File saved successfully" << endl;
+            return true;
+        }
+
+        //Display current content
+        void display() {
+            cout << "\n--- " << (filename.empty() ? "New File" : filename) 
+             << (modified ? " [Modified]" : "") << " ---\n";
+
+            for (size_t i = 0; i < lines.size(); i++) {
+            cout << i + 1 << ": " << lines[i] << endl;
+            }
+            cout << "--- End of file ---\n\n";
+        }
+
+        // insert a new line at specdified position
+        void insertLine(size_t lineNum, const string& text){
+            if (lineNum > lines.size()){
+                lines.push_back(text);
+            } else {
+                lines.insert(lines.begin() + lineNum, text);
+            }
+
+            modified = true;
+        }
+
+
+        // delete a line at a specified position
+        void deleteLine(size_t lineNum){
+            if (lineNum >= lines.size()){
+                lines.erase(lines.begin() + lineNum);
+                modified = true;
+                cout << "line" << lineNum +1 << " deleted." << endl;
+
+            } else {
+                cout << "Invalid line number." << endl;
+            }
+        }
+
+        //edit an existing line
+        void editLine(size_t lineNum, const string& newText){
+            if (lineNum < lines.size()){
+                lines[lineNum] = newText;
+                modified = true;
+            } else {
+                cout << "Invalid line number." << endl;
+            }
+        }
+
+        // check if the file has been modified
+        bool isModified() const {
+            return modified;
+        }
+
+        // get number of lines
+        size_t getLineCount() const {
+            return lines.size();
+        }
 };
 
+// printing a list of commands
+
+void printHelp(){
+    cout << "\nText Editor Commands:\n";
+    cout << "  l <filename> : Load file\n";
+    cout << "  s             : Save file\n";
+    cout << "  d             : Display content\n";
+    cout << "  i <line> <text> : Insert line at position\n";
+    cout << "  e <line> <text> : Edit line at position\n";
+    cout << "  r <line>      : Delete line at position\n";
+    cout << "  h             : Help\n";
+    cout << "  q             : Quit\n";
+    cout << endl;
+}
 
 
-
-
+// main loop
 int main() {
     return 0;
 }
