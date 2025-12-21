@@ -137,11 +137,14 @@ void printHelp(){
 int main() {
     TextEditor editor;
     string command;
-
+    
     cout << "Simple Text Editor v1.0\n";
     printHelp();
 
     while (true) {
+        cout << "> ";
+        cin >> command;
+
         if (command == "q") {
             if (editor.isModified()) {
                 cout << "File has unsaved changes. Save before quitting? (y/n): ";
@@ -205,11 +208,7 @@ int main() {
         else {
             cout << "Unknown command. Type 'h' for help." << endl;
         }
-
-
     }
-
-
 
     return 0;
 }
