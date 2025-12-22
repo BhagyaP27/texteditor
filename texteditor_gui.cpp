@@ -46,8 +46,120 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstantance, LPSTR lpCmdL
     RegisterClass(&wc);
 
     // create the window
-    
+    hMainWindow = CreateWindowEx(
+        0, // Optional window styles
+        CLASS_NAME, //window clas
+        L"Text Editor", // window title
+        WS_OVERLAPPEDWINDOW, // window style
+        CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, // size and position
+        NULL, //parent window
+        NULL, // menu
+        hInstance, // instance handle
+        NULL // additional application data
+    );
+
+    if (hMainWindow == NULL) {
+        return 0;
+    }
+
+    // create the menu bar
+
+    CreateMenuBar(hMainWindow);
+    // create the edit control
+
+    hEdit = CreateWindowEx(
+        0, // Optional window styles
+        L"EDIT", // built-in edit control class
+        NULL, // no initial text
+        WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
+        0, 0, 0, 0, // size and position (will be resized later)
+        hMainWindow, // parent window
+        NULL, // no menu
+        hInstance, // instance handle
+        NULL // additional application data
+    );
+
+    // set s nice monospace font
+    HFONT hFont = CreateFont(
+        16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY, FIXED_PITCH | FF_DONTCARE,
+        L"Consolas"
+    );
+    SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    //Show the window
+    MSG msg = { };
+    while (GetMessage(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    return 0;
+
+}
 
 
+//Windowproc to handle messages sent to our window
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
+    switch (uMsg) {
+        case WM_CREATE:
+        return 0;
+        case WM_SIZE:
+        {
+            //resize the edit control to fill the window
+            RECT rcClient;
+            GetClientRect(hwnd, &rcClient);
+            SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom, SWP_NOZORDER);
+            return 0;
+        }
+        case WM_COMMAND:
+        {
+            int wmId = LOWORD(wParam);
+            // menu selections
+            switch (LOWORD(wParam)) {
+                case ID_FILE_NEW:
+                    NewFile();
+                    break;
+                case ID_FILE_OPEN:
+                    openFile(hwnd);
+                    break;
+                case ID_FILE_SAVE:
+                    SaveFile(hwnd);
+                    break;
+                case ID_FILE_SAVEAS:
+                    SaveFileAs(hwnd);
+                    break;
+                case ID_FILE_EXIT:
+                    PostQuitMessage(0);
+                    break;
+                case ID_EDIT_CUT:
+                    SendMessage(hEdit, WM_CUT, 0, 0);
+                    break;
+                case ID_EDIT_COPY:
+                    SendMessage(hEdit, WM_COPY, 0, 0);
+                    break;
+                case ID_EDIT_PASTE:
+                    SendMessage(hEdit, WM_PASTE, 0, 0);
+                    break;
+                case ID_HELP_ABOUT:
+                    MessageBox(hwnd, L"Text Editor v1.0", L"About", MB_OK | MB_ICONINFORMATION);
+                    break;
+            }
 
+            //check if the text was modified
+            if (HIWORD(wParam) == EN_CHANGE) {
+                isModified = true;
+                UpdateTitle();
+            }
+            return 0;
+        }
+        
+        case WM_DESTROY:
+            // Window is being destroyed, quit the application 
+            PostQuitMessage(0);
+            return 0;
+
+    }
+
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
