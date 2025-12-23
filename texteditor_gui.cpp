@@ -163,3 +163,34 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
+
+
+//create the menu bar
+void createMenuBar(HWND hwnd){
+    HMENU hMenuBar = CreateMenu();
+
+    //  file menu
+    HMENU hFileMenu = CreateMenu();
+    AppendMenu(hFileMenu, MF_STRING, ID_FILE_NEW, L"&New\tCtrl+N");
+    AppendMenu(hFileMenu, MF_STRING, ID_FILE_OPEN, L"&Open...\tCtrl+O");
+    AppendMenu(hFileMenu, MF_STRING, ID_FILE_SAVE, L"&Save\tCtrl+S");
+    AppendMenu(hFileMenu, MF_STRING, ID_FILE_SAVEAS, L"Save &As...");
+    AppendMenu(hFileMenu, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hFileMenu, MF_STRING, ID_FILE_EXIT, L"E&xit");
+    AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFileMenu, L"&File");
+
+    // edit menu
+    HMENU hEditMenu = CreateMenu();
+    AppendMenu(hEditMenu, MF_STRING, ID_EDIT_CUT, L"Cu&t\tCtrl+X");
+    AppendMenu(hEditMenu, MF_STRING, ID_EDIT_COPY, L"&Copy\tCtrl+C");
+    AppendMenu(hEditMenu, MF_STRING, ID_EDIT_PASTE, L"&Paste\tCtrl+V");
+    AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hEditMenu, L"&Edit");
+
+    // help menu
+    HMENU hHelpMenu = CreateMenu();
+    AppendMenu(hHelpMenu, MF_STRING, ID_HELP_ABOUT, L"&About");
+    AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelpMenu, L"&Help");
+    SetMenu(hwnd, hMenuBar);
+}
+
+
