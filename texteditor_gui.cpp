@@ -193,4 +193,19 @@ void createMenuBar(HWND hwnd){
     SetMenu(hwnd, hMenuBar);
 }
 
+// create a new file
+void NewFile(){
+    if (isModified){
+        int result = MessageBox(hMainWindow, L"The current file has unsaved changes. Do you want to save them?", L"Unsaved Changes", MB_YESNOCANCEL | MB_ICONWARNING);
+        if (result == IDYES){
+            SaveFile(hMainWindow);
+        } else if (result == IDCANCEL){
+            return; // cancel new file operation
+        }
+    }
 
+    SetWindowText(hEdit, L"");
+    currentFilename = "";
+    isModified = false;
+    UpdateTitle();
+}
