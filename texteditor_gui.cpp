@@ -311,3 +311,26 @@ void SaveFileAs(HWND hwnd) {
         SaveFile(hwnd);
     }
 }
+
+
+// Update window title
+void UpdateTitle() {
+    std::wstring title = L"Text Editor - ";
+    
+    if (currentFilename.empty()) {
+        title += L"Untitled";
+    } else {
+        // Convert filename to wide string
+        int wideSize = MultiByteToWideChar(CP_UTF8, 0, currentFilename.c_str(), -1, NULL, 0);
+        wchar_t* wideFilename = new wchar_t[wideSize];
+        MultiByteToWideChar(CP_UTF8, 0, currentFilename.c_str(), -1, wideFilename, wideSize);
+        title += wideFilename;
+        delete[] wideFilename;
+    }
+    
+    if (isModified) {
+        title += L" *";
+    }
+    
+    SetWindowText(hMainWindow, title.c_str());
+}
