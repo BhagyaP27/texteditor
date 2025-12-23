@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Text Editor GUI",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-o",
+                "texteditor_gui.exe",
+                "texteditor_gui.cpp",
+                "-lgdi32",
+                "-lcomdlg32",
+                "-mwindows"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
