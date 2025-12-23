@@ -258,3 +258,56 @@ void openFile(HWND hwnd){
 }
 
 // save the current file
+void SaveFile(HWND hwnd) {
+    if (currentFilename.empty()) {
+        SaveFileAs(hwnd);
+        return;
+    }
+    
+    // Get text from edit control
+    int length = GetWindowTextLength(hEdit);
+    wchar_t* buffer = new wchar_t[length + 1];
+    GetWindowText(hEdit, buffer, length + 1);
+    
+    // Convert to narrow string
+    int narrowSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, NULL, 0, NULL, NULL);
+    char* narrowBuffer = new char[narrowSize];
+    WideCharToMultiByte(CP_UTF8, 0, buffer, -1, narrowBuffer, narrowSize, NULL, NULL);
+    
+    // Save to file
+    std::ofstream file(currentFilename);
+    if (file.is_open()) {
+        file << narrowBuffer;
+        file.close();
+        isModified = false;
+        UpdateTitle();
+        MessageBox(hwnd, L"File saved successfully!", L"Success", MB_OK | MB_ICONINFORMATION);
+    } else {
+        MessageBox(hwnd, L"Could not save file!", L"Error", MB_OK | MB_ICONERROR);
+    }
+    
+    delete[] buffer;
+    delete[] narrowBuffer;
+}
+
+// Save file as
+void SaveFileAs(HWND hwnd) {
+    OPENFILENAME ofn;
+    wchar_t szFile[260] = { 0 };
+    
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+    
+    if (GetSaveFileName(&ofn)) {
+        char filename[260];
+        WideCharToMultiByte(CP_UTF8, 0, szFile, -1, filename, 260, NULL, NULL);
+        currentFilename = filename;
+        SaveFile(hwnd);
+    }
+}
