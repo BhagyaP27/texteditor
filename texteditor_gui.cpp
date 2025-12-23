@@ -88,6 +88,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstantance, LPSTR lpCmdL
     );
     SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 
+
+    // Show the window BEFORE the message loop
+    ShowWindow(hMainWindow, nCmdShow);
+    UpdateWindow(hMainWindow);
+
     //Show the window
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0)) {
@@ -166,7 +171,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
 
 //create the menu bar
-void createMenuBar(HWND hwnd){
+void CreateMenuBar(HWND hwnd){
     HMENU hMenuBar = CreateMenu();
 
     //  file menu
