@@ -209,3 +209,52 @@ void NewFile(){
     isModified = false;
     UpdateTitle();
 }
+
+// open a file
+void openFile(HWND hwnd){
+    OPENFILENAME ofn;
+    wchar_t szFile[260] = { 0 };
+
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileName(&ofn) ){
+
+        //convert wide string into normal string
+        char filename[260];
+        WideCharToMultiByte(CP_UTF8, 0, szFile, -1, filename, 260, NULL, NULL);
+
+
+        //read file
+        std::ifstream file(filename);
+        if(file.is_open()){
+            std::stringstream buffer;
+            buffer << file.rdbuf();
+            std::string content = buffer.str();
+            file.close();
+
+            //convert to wide string and set text
+            int wideSize = MultiByteToWideChar(CP_UTF8, 0, content.c_str(), -1, NULL, 0);
+            wchar_t* wideContent = new wchar_t[wideSize];
+            MultiByteToWideChar(CP_UTF8, 0, content.c_str(), -1, wideContent, wideSize);
+
+            SetWindowText(hEdit, wideContent);
+            delete[] wideContent;
+
+            currentFilename = filename;
+            isModified = false;
+            UpdateTitle();
+        } else {
+            MessageBox(hwnd, L"Could not open the file.", L"Error", MB_OK | MB_ICONERROR);
+        }
+    }
+}
+
+// save the current file
