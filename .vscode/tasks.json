@@ -2,10 +2,24 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build Text Editor GUI",
+            "label": "Build Console Editor",
             "type": "shell",
             "command": "g++",
             "args": [
+                "-o",
+                "texteditor.exe",
+                "texteditor.cpp"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build GUI Editor",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-DUNICODE",
+                "-D_UNICODE",
                 "-o",
                 "texteditor_gui.exe",
                 "texteditor_gui.cpp",
@@ -16,7 +30,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": ["$gcc"]
         }
     ]
 }
